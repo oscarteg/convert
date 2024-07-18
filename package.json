@@ -37,5 +37,10 @@
 		"vite": "^5.1.1",
 		"vitest": "^1.2.2"
 	},
-	"type": "module"
+	"type": "module",
+	"pnpm": {
+		"patchedDependencies": {
+			"@ffmpeg/util@0.12.1": "patches/@ffmpeg__util@0.12.1.patch"
+		}
+	}
 }

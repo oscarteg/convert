@@ -2,7 +2,7 @@
 	import { FFmpeg } from '@ffmpeg/ffmpeg';
 	// @ts-ignore
 	import type { LogEvent } from '@ffmpeg/ffmpeg/dist/esm/types';
-	import { fetchFile, toBlobURL } from '@ffmpeg/util/dist/esm/index.js';
+	import { fetchFile, toBlobURL } from '@ffmpeg/util';
 
 	let videoEl: HTMLVideoElement;
 
