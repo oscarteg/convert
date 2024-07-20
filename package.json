@@ -12,7 +12,9 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"sst:deploy": "sst deploy",
+		"sst:dev": "sst dev"
 	},
 	"devDependencies": {
 		"@ffmpeg/ffmpeg": "^0.12.10",
@@ -35,12 +37,21 @@
 		"tslib": "^2.6.2",
 		"typescript": "^5.3.3",
 		"vite": "^5.1.1",
-		"vitest": "^1.2.2"
+		"vitest": "^1.2.2",
+		"sst": "^2.43.4",
+		"aws-cdk-lib": "2.142.1",
+		"constructs": "10.3.0",
+		"svelte-kit-sst": "^2.43.4"
 	},
 	"type": "module",
 	"pnpm": {
 		"patchedDependencies": {
 			"@ffmpeg/util@0.12.1": "patches/@ffmpeg__util@0.12.1.patch"
 		}
+	},
+	"dependencies": {
+		"autoprefixer": "^10.4.19",
+		"postcss": "^8.4.39",
+		"tailwindcss": "^3.4.6"
 	}
 }
