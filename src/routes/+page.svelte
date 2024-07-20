@@ -9,16 +9,33 @@
 	let conversionProgress: { [key: string]: number } = {};
 	let isLoading = false;
 	let selectedFormats: { [key: string]: string } = {};
+	let loadingStatus = 'Initializing...';
+	let errorMessage = '';
 
 	onMount(async () => {
-		isLoading = true;
-		await initIndexedDB();
-		files = await getFiles();
-		files.forEach((file) => {
-			selectedFormats[file.id] = file.converted ? getFileExtension(file.type).slice(1) : 'flac';
-		});
-		await loadFFmpeg();
-		isLoading = false;
+		try {
+			loadingStatus = 'Initializing IndexedDB...';
+			await initIndexedDB();
+
+			loadingStatus = 'Loading files...';
+			files = await getFiles();
+			files.forEach((file) => {
+				selectedFormats[file.id] = file.converted ? getFileExtension(file.type).slice(1) : 'flac';
+			});
+
+			loadingStatus = 'Loading FFmpeg...';
+			await loadFFmpeg((message) => {
+				loadingStatus = `Loading FFmpeg: ${message}`;
+			});
+
+			isLoading = false;
+		} catch (error) {
+			if (error instanceof Error) {
+				console.error('Initialization error:', error);
+				errorMessage = `Error during initialization: ${error.message}`;
+				isLoading = false;
+			}
+		}
 	});
 
 	async function handleFileSelect(event: Event) {
@@ -107,7 +124,6 @@
 			'audio/ogg': '.ogg',
 			'audio/flac': '.flac',
 			'audio/aiff': '.aiff'
-			// Add more mime types and their corresponding extensions as needed
 		};
 		return extensions[mimeType] || '';
 	}
@@ -115,8 +131,11 @@
 
 <div class="max-w-2xl mx-auto mt-8 p-4">
 	{#if isLoading}
-		<p class="text-center">Loading application...</p>
+		<p>Loading application: {loadingStatus}</p>
+	{:else if errorMessage}
+		<p>Error: {errorMessage}</p>
 	{:else}
+		<button on:click={() => location.reload()}>Reload Page</button>
 		<div
 			class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-gray-400 transition-colors"
 			class:border-gray-400={dragActive}
@@ -124,7 +143,7 @@
 			on:dragleave={() => (dragActive = false)}
 			on:dragover|preventDefault
 			on:drop|preventDefault={handleDrop}
-			on:click={() => document.getElementById('fileInput').click()}
+			on:click={() => document.getElementById('fileInput')?.click()}
 		>
 			<p class="text-gray-500">Drag & drop or click to select</p>
 			<input
