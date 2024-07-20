@@ -8,7 +8,7 @@ import type { User } from '$lib/types';
 
 const users: User[] = JSON.parse(USERS);
 
-export const basicAuth: Handle = ({ event, resolve }) => {
+export const basicAuth: Handle = async ({ event, resolve }) => {
 	const authorization = event.request.headers.get('Authorization');
 
 	if (!authorization || !authorization.startsWith('Basic '))
@@ -39,7 +39,12 @@ export const basicAuth: Handle = ({ event, resolve }) => {
 		username: user.username
 	};
 
-	return resolve(event);
+	const response = await resolve(event);
+
+	response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+	response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+
+	return response;
 };
 
 // Use sequence if you have multiple hooks
