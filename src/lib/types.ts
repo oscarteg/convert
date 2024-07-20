@@ -7,3 +7,8 @@ export type FileInfo = {
 	converted: boolean;
 	blob: Blob;
 };
+
+export type User = {
+	username: string;
+	password: string;
+};
