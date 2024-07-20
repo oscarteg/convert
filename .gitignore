@@ -11,3 +11,6 @@ vite.config.ts.timestamp-*
 
 # sst
 .sst
+
+# vercel
+.vercel
