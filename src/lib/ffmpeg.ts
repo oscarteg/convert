@@ -44,7 +44,16 @@ export async function convertAudioFormat(
 		}
 	});
 
-	await ffmpeg.exec(['-i', inputFileName, outputFileName]);
+	// Add -map_metadata 0 to preserve metadata
+	await ffmpeg.exec([
+		'-i',
+		inputFileName,
+		'-map_metadata',
+		'0',
+		'-c:a',
+		getCodecForFormat(outputFormat), // Get the appropriate codec
+		outputFileName
+	]);
 
 	const data = await ffmpeg.readFile(outputFileName);
 	return new Blob([data], { type: `audio/${outputFormat}` });
@@ -62,4 +71,18 @@ function getFileExtension(mimeType: string): string {
 	return extensions[mimeType] || '';
 }
 
-export const supportedFormats = ['mp3', 'wav', 'ogg', 'flac', 'aiff'];
+// Helper function to get the appropriate codec for each format
+function getCodecForFormat(format: string): string {
+	const codecMap: { [key: string]: string } = {
+		mp3: 'libmp3lame',
+		aac: 'aac',
+		ogg: 'libvorbis',
+		flac: 'flac',
+		wav: 'pcm_s16le',
+		aiff: 'pcm_s16be'
+	};
+
+	return codecMap[format] || format;
+}
+
+export const supportedFormats = ['mp3', 'wav', 'ogg', 'flac', 'aiff', 'aac'];
