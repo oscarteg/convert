@@ -52,3 +52,13 @@ export async function updateFile(file: FileInfo): Promise<void> {
 		request.onsuccess = () => resolve();
 	});
 }
+
+export async function clearFiles(): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction(['files'], 'readwrite');
+		const store = transaction.objectStore('files');
+		const request = store.clear();
+		request.onerror = () => reject(request.error);
+		request.onsuccess = () => resolve();
+	});
+}
